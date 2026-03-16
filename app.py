@@ -33,8 +33,19 @@ with st.sidebar:
     sale_conv = st.slider("Конверсия заявки в продажу", 0.10, 0.80, st.session_state.get("sale_conv", 0.50), 0.01, key="sale_conv")
 
     st.subheader("2. База и удержание")
-    ltv_months = st.slider("Срок жизни клиента, мес", 1, 12, st.session_state.get("ltv_months", 7), 1, key="ltv_months")
-    churn = st.slider("Churn в месяц", 0.05, 0.20, st.session_state.get("churn", 0.14), 0.01, key="churn")
+
+ltv_months = st.slider(
+    "Срок жизни ученика / LTV, мес",
+    min_value=1,
+    max_value=12,
+    value=st.session_state.get("ltv_months", 7),
+    step=1,
+    key="ltv_months"
+)
+
+churn = 1 / ltv_months if ltv_months > 0 else 0.0
+st.metric("Расчетный Churn в месяц", f"{churn:.2%}")
+
 
     st.subheader("3. Продукт и расходы")
     group_share = st.slider("Доля учеников в мини-группах", 0.00, 1.00, st.session_state.get("group_share", 0.50), 0.05, key="group_share")
