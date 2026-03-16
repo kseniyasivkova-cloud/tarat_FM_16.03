@@ -70,14 +70,41 @@ with st.sidebar:
         step=5,
     )
 
+    st.markdown("### Индивидуальные занятия")
     indiv_price_month = st.slider("Средний чек индивид, ₽/мес", 5_000, 60_000, 28_000, 500)
     indiv_lesson_price = st.slider("Стоимость 1 занятия для клиента (индив), ₽", 500, 10_000, 3_500, 100)
-    indiv_tutor_lesson_cost = st.slider("Ставка препода за 1 занятие (индив), ₽", 500, 5_000, 2_000, 100)
 
+    indiv_teacher_share_pct = st.slider(
+        "Доля преподавателя от цены занятия (индив), %",
+        min_value=0.0,
+        max_value=100.0,
+        value=57.1,
+        step=0.1,
+    )
+
+    indiv_tutor_lesson_cost = indiv_lesson_price * indiv_teacher_share_pct / 100
+    st.caption(
+        f"Расчетная ставка препода за 1 занятие (индив): {indiv_tutor_lesson_cost:,.0f} ₽".replace(",", " ")
+    )
+
+    st.markdown("### Мини-группы")
     group_price_month = st.slider("Средний чек мини-группы, ₽/мес", 5_000, 60_000, 16_000, 500)
     group_lessons_month = st.slider("Кол-во занятий в мес (группа)", 1, 16, 8, 1)
     group_lesson_price = st.slider("Стоимость 1 занятия для клиента (группа), ₽", 500, 10_000, 2_000, 100)
-    group_monthly_cost = st.slider("Ставка препода за месяц с 1 группы, ₽", 5_000, 50_000, 16_000, 500)
+
+    group_teacher_share_pct = st.slider(
+        "Доля преподавателя от цены занятия (группа), %",
+        min_value=0.0,
+        max_value=100.0,
+        value=100.0,
+        step=1.0,
+    )
+
+    group_monthly_cost = group_lesson_price * group_lessons_month * group_teacher_share_pct / 100
+    st.caption(
+        f"Расчетная ставка препода за месяц с 1 группы: {group_monthly_cost:,.0f} ₽".replace(",", " ")
+    )
+
     group_limit = st.slider("Лимит учеников в группе", 3, 8, 4, 1)
 
     st.subheader("4. Кросс-сейл")
@@ -117,16 +144,16 @@ with st.sidebar:
 
     agency_new_pct_ui = st.slider(
         "Сценарий 1: % от новых привлеченных, %",
-        min_value=40,
-        max_value=60,
+        min_value=0,
+        max_value=100,
         value=50,
         step=1,
     )
 
     agency_revshare_ui = st.slider(
         "Сценарий 2: RevShare от выручки, %",
-        min_value=10,
-        max_value=25,
+        min_value=0,
+        max_value=100,
         value=15,
         step=1,
     )
@@ -174,6 +201,12 @@ if growth_new_sales_pct == 0:
 
 if group_share_pct == 100:
     st.success("При 100% групп валовая маржа по групповому продукту стремится к уровню около 75%, как в Excel [file:133].")
+
+if abs(indiv_teacher_share_pct - 57.1) < 0.2:
+    st.caption("Для индивида значение 57.1% соответствует Excel: 3500 ₽ клиент платит за занятие, 2000 ₽ получает преподаватель [file:133].")
+
+if abs(group_teacher_share_pct - 100.0) < 0.2:
+    st.caption("Для группы значение 100% соответствует Excel: 2000 ₽ за занятие и 16 000 ₽ за 8 занятий в месяц на группу [file:133].")
 
 k1, k2, k3, k4 = st.columns(4)
 k1.metric("Выручка M12", rub(active_summary["revenue_m12"]))
@@ -313,6 +346,6 @@ with tabs[3]:
     )
 
 st.caption(
-    "Логика v4 основана на листе Excel 'Динамика_инд+гр (12 мес)+кросс-': LTV и Churn взаимосвязаны, "
-    "база учеников считается помесячно, а агентская комиссия вычитается до расчета чистой прибыли [file:133]."
+    "Логика v4 основана на листе Excel 'Динамика_инд+гр (12 мес)+кросс-': "
+    "LTV и Churn взаимосвязаны, база учеников считается помесячно, а ставка преподавателя считается от цены занятия [file:133]."
 )
