@@ -28,47 +28,48 @@ with st.sidebar:
 
     st.subheader("1. Воронка продаж")
     start_students = st.slider("База на начало периода, учеников", 0, 300, 90, 1)
-    growth_new_sales = st.slider(
-        "Ежемесячный рост новых продаж",
-        min_value=0.00,
-        max_value=0.30,
-        value=0.20,
-        step=0.01,
-        format="%.0f%%",
+
+    growth_new_sales_pct = st.slider(
+        "Ежемесячный рост новых продаж, %",
+        min_value=0,
+        max_value=30,
+        value=20,
+        step=1,
     )
+
     ad_budget_m1 = st.slider("Рекламный бюджет M1, ₽", 0, 500_000, 130_000, 5_000)
     cpl = st.slider("Стоимость лида (CPL), ₽", 500, 10_000, 2_500, 100)
-    trial_conv = st.slider(
-        "Конверсия лид -> пробный",
-        min_value=0.10,
-        max_value=1.00,
-        value=0.50,
-        step=0.01,
-        format="%.0f%%",
+
+    trial_conv_pct = st.slider(
+        "Конверсия лид -> пробный, %",
+        min_value=10,
+        max_value=100,
+        value=50,
+        step=1,
     )
-    sale_conv = st.slider(
-        "Конверсия пробный -> продажа",
-        min_value=0.10,
-        max_value=1.00,
-        value=0.50,
-        step=0.01,
-        format="%.0f%%",
+
+    sale_conv_pct = st.slider(
+        "Конверсия пробный -> продажа, %",
+        min_value=10,
+        max_value=100,
+        value=50,
+        step=1,
     )
 
     st.subheader("2. База и удержание")
     ltv_months = st.slider("Срок жизни ученика / LTV, мес", 1, 12, 7, 1)
     churn = 1 / ltv_months if ltv_months > 0 else 0.0
-    st.metric("Расчетный Churn в месяц", f"{churn:.2%}")
+    st.metric("Расчетный Churn в месяц", churn, format="percent")
 
     st.subheader("3. Продукт и формат")
-    group_share = st.slider(
-        "Доля учеников в мини-группах",
-        min_value=0.00,
-        max_value=1.00,
-        value=0.50,
-        step=0.05,
-        format="%.0f%%",
+    group_share_pct = st.slider(
+        "Доля учеников в мини-группах, %",
+        min_value=0,
+        max_value=100,
+        value=50,
+        step=5,
     )
+
     indiv_price_month = st.slider("Средний чек индивид, ₽/мес", 5_000, 60_000, 28_000, 500)
     indiv_lesson_price = st.slider("Стоимость 1 занятия для клиента (индив), ₽", 500, 10_000, 3_500, 100)
     indiv_tutor_lesson_cost = st.slider("Ставка препода за 1 занятие (индив), ₽", 500, 5_000, 2_000, 100)
@@ -80,67 +81,68 @@ with st.sidebar:
     group_limit = st.slider("Лимит учеников в группе", 3, 8, 4, 1)
 
     st.subheader("4. Кросс-сейл")
-    upsell_conv = st.slider(
-        "Конверсия в покупку доп. услуги",
-        min_value=0.00,
-        max_value=0.50,
-        value=0.20,
-        step=0.01,
-        format="%.0f%%",
+    upsell_conv_pct = st.slider(
+        "Конверсия в покупку доп. услуги, %",
+        min_value=0,
+        max_value=50,
+        value=20,
+        step=1,
     )
+
     upsell_price = st.slider("Средний чек доп. услуги, ₽", 500, 20_000, 3_500, 100)
     upsell_cost = st.slider("Себестоимость / ФОТ доп. услуги на 1 чел, ₽", 0, 10_000, 2_000, 100)
 
     st.subheader("5. Налоги и постоянные")
-    tax_rate = st.slider(
-        "Налог УСН",
-        min_value=0.00,
-        max_value=0.20,
-        value=0.07,
-        step=0.005,
-        format="%.1f%%",
+    tax_rate_pct = st.slider(
+        "Налог УСН, %",
+        min_value=0.0,
+        max_value=20.0,
+        value=7.0,
+        step=0.5,
     )
-    acquiring_rate = st.slider(
-        "Эквайринг",
-        min_value=0.00,
-        max_value=0.05,
-        value=0.025,
-        step=0.001,
-        format="%.1f%%",
+
+    acquiring_rate_pct = st.slider(
+        "Эквайринг, %",
+        min_value=0.0,
+        max_value=5.0,
+        value=2.5,
+        step=0.1,
     )
+
     fixed_opex = st.slider("Постоянные расходы, ₽/мес", 0, 300_000, 40_000, 5_000)
     capex = st.slider("CAPEX в 1-й месяц, ₽", 0, 500_000, 70_000, 5_000)
 
     st.subheader("6. Агентская комиссия")
     active_scenario = st.selectbox("Активный сценарий", ["Разовый %", "RevShare", "CPA"])
-    agency_new_pct = st.slider(
-        "Сценарий 1: % от новых привлеченных",
-        min_value=0.40,
-        max_value=0.60,
-        value=0.50,
-        step=0.01,
-        format="%.0f%%",
+
+    agency_new_pct_ui = st.slider(
+        "Сценарий 1: % от новых привлеченных, %",
+        min_value=40,
+        max_value=60,
+        value=50,
+        step=1,
     )
-    agency_revshare = st.slider(
-        "Сценарий 2: RevShare от выручки",
-        min_value=0.10,
-        max_value=0.25,
-        value=0.15,
-        step=0.01,
-        format="%.0f%%",
+
+    agency_revshare_ui = st.slider(
+        "Сценарий 2: RevShare от выручки, %",
+        min_value=10,
+        max_value=25,
+        value=15,
+        step=1,
     )
+
     agency_cpa = st.slider("Сценарий 3: CPA за нового ученика, ₽", 1_000, 20_000, 9_000, 500)
 
 params = {
     "start_students": start_students,
-    "growth_new_sales": growth_new_sales,
+    "growth_new_sales": growth_new_sales_pct / 100,
     "ad_budget_m1": ad_budget_m1,
     "cpl": cpl,
-    "trial_conv": trial_conv,
-    "sale_conv": sale_conv,
+    "trial_conv": trial_conv_pct / 100,
+    "sale_conv": sale_conv_pct / 100,
     "ltv_months": ltv_months,
     "churn": churn,
-    "group_share": group_share,
+    "group_share": group_share_pct / 100,
     "indiv_price_month": indiv_price_month,
     "indiv_lesson_price": indiv_lesson_price,
     "indiv_tutor_lesson_cost": indiv_tutor_lesson_cost,
@@ -149,15 +151,15 @@ params = {
     "group_lesson_price": group_lesson_price,
     "group_monthly_cost": group_monthly_cost,
     "group_limit": group_limit,
-    "upsell_conv": upsell_conv,
+    "upsell_conv": upsell_conv_pct / 100,
     "upsell_price": upsell_price,
     "upsell_cost": upsell_cost,
-    "tax_rate": tax_rate,
-    "acquiring_rate": acquiring_rate,
+    "tax_rate": tax_rate_pct / 100,
+    "acquiring_rate": acquiring_rate_pct / 100,
     "fixed_opex": fixed_opex,
     "capex": capex,
-    "agency_new_pct": agency_new_pct,
-    "agency_revshare": agency_revshare,
+    "agency_new_pct": agency_new_pct_ui / 100,
+    "agency_revshare": agency_revshare_ui / 100,
     "agency_cpa": agency_cpa,
 }
 
@@ -167,25 +169,23 @@ active_df = active["monthly"]
 active_summary = active["summary"]
 active_pie = active["expense_mix"]
 
-if growth_new_sales == 0:
+if growth_new_sales_pct == 0:
     st.info("Сценарий близок к стагнации: рост новых продаж = 0%, поэтому база ограничивается оттоком [file:133].")
 
-if group_share == 1.0:
+if group_share_pct == 100:
     st.success("При 100% групп валовая маржа по групповому продукту стремится к уровню около 75%, как в Excel [file:133].")
 
-# KPI 1
 k1, k2, k3, k4 = st.columns(4)
 k1.metric("Выручка M12", rub(active_summary["revenue_m12"]))
 k2.metric("Чистая прибыль M12", rub(active_summary["net_profit_m12"]))
-k3.metric("Валовая маржа M12", pct(active_summary["gross_margin_m12"]))
+k3.metric("Валовая маржа M12", active_summary["gross_margin_m12"], format="percent")
 k4.metric("Окупаемость", f'M{active_summary["payback_month"]}' if active_summary["payback_month"] else "Не достигнута")
 
-# KPI 2
 k5, k6, k7, k8 = st.columns(4)
 k5.metric("Активные ученики M12", f'{active_summary["active_students_m12"]:.0f}')
 k6.metric("Новых учеников за год", f'{active_summary["new_students_year"]:.0f}')
-k7.metric("Маржинальность M12", pct(active_summary["margin_rate_m12"]))
-k8.metric("Рентабельность по ЧП M12", pct(active_summary["net_margin_m12"]))
+k7.metric("Маржинальность M12", active_summary["margin_rate_m12"], format="percent")
+k8.metric("Рентабельность по ЧП M12", active_summary["net_margin_m12"], format="percent")
 
 tabs = st.tabs(["Дашборд", "Сценарии", "Модель", "Экспорт"])
 
@@ -222,7 +222,11 @@ with tabs[1]:
             "Окупаемость": f'M{s["payback_month"]}' if s["payback_month"] else "Нет",
         })
 
-    st.dataframe(pd.DataFrame(summary_rows), width="stretch", hide_index=True)
+    st.dataframe(
+        pd.DataFrame(summary_rows),
+        width="stretch",
+        hide_index=True,
+    )
 
 with tabs[2]:
     show_cols = [
@@ -272,7 +276,12 @@ with tabs[2]:
         "Накопленный cash flow",
     ]
 
-    st.dataframe(detail, width="stretch", hide_index=True)
+    st.dataframe(
+        detail,
+        width="stretch",
+        hide_index=True,
+        height=520,
+    )
 
 with tabs[3]:
     st.download_button(
