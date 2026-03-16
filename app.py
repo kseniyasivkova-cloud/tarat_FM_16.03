@@ -114,12 +114,24 @@ k4.metric("Окупаемость", f'M{active_summary["payback_month"]}' if act
 tab1, tab2, tab3, tab4 = st.tabs(["Дашборд", "Сценарии", "Модель", "Экспорт"])
 
 with tab1:
-    c1, c2 = st.columns([1.7, 1.0])
-    with c1:
-        st.plotly_chart(revenue_profit_chart(results), width="stretch", config={"displaylogo": False})
-    with c2:
-        st.plotly_chart(expense_pie(active_pie, f"Структура расходов — {active_scenario}"), width="stretch", config={"displaylogo": False})
-    st.plotly_chart(cashflow_waterfall(active_df, f"Cash Flow / Окупаемость — {active_scenario}"), width="stretch", config={"displaylogo": False})
+    st.plotly_chart(
+        revenue_profit_chart(results),
+        width="stretch",
+        config={"displaylogo": False}
+    )
+
+    st.plotly_chart(
+        expense_pie(active_pie, "Структура расходов"),
+        width="stretch",
+        config={"displaylogo": False}
+    )
+
+    st.plotly_chart(
+        cashflow_waterfall(active_df, f"Cash Flow / Окупаемость — {active_scenario}"),
+        width="stretch",
+        config={"displaylogo": False}
+    )
+
 
 with tab2:
     summary_df = scenario_summary_table(results)
